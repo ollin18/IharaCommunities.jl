@@ -17,7 +17,9 @@ end
 
 function strength(g,i)
     neigh = neighbors(g,i)
-    strength = sum(map(x-> g.weights[x,i],neigh))
+    strengthi = sum(map(x-> g.weights[x,i],neigh))
+    strengtho = sum(map(x-> g.weights[i,x],neigh))
+    strength = strengthi + strengtho
     strength
 end
 
@@ -35,14 +37,14 @@ end
 
 function inv_degree_ollin(g,i,v)
     try
-        1/force(g,i,v)
+        1/strength(g,i,v)
     catch
         0
     end
 end
 
 function rel_single(g,i)
-    if degree(g,i) == 1
+    if outdegree(g,i) == 1
         1
     else
         0
@@ -168,6 +170,7 @@ function num_com(v,threshold)
 		    push!(index,i)
 		end
 	end
+    cuantos,index
 end
 
 
@@ -183,9 +186,15 @@ function contrae(g,v,ei)
     y = zeros(Float64, nv(g))
     for i in 1:nv(g)
         for j in inneighbors(g,i)
-            u = ei[Edge(j,i)]
-            y[i] += v[u]
-            y[j] += v[u]
+            #  if has_edge(g,j,i)
+                u = ei[Edge(j,i)]
+                y[i] += v[u]
+            #  end
+            #  if has_edge(g,i,j)
+            #      u = ei[Edge(i,j)]
+            #      y[i] += v[u]
+            #  end
+            #  y[j] += v[u]
         end
     end
     y
